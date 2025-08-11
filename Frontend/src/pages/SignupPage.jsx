@@ -4,7 +4,7 @@ import { useNavigate, Link } from "react-router-dom";
 
 export default function SignupPage() {
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -22,7 +22,7 @@ export default function SignupPage() {
   };
 
   const validateForm = () => {
-    if (!formData.fullName.trim()) {
+    if (!formData.name.trim()) {
       setError("Full name is required");
       return false;
     }
@@ -67,7 +67,7 @@ export default function SignupPage() {
   };
 
   const nextStep = () => {
-    if (step === 1 && formData.fullName && formData.email) {
+    if (step === 1 && formData.name && formData.email) {
       setStep(2);
       setError("");
     }
@@ -127,7 +127,7 @@ export default function SignupPage() {
             {step === 1 && (
               <>
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name
                   </label>
                   <div className="relative">
@@ -137,12 +137,12 @@ export default function SignupPage() {
                       </svg>
                     </div>
                     <input
-                      id="fullName"
-                      name="fullName"
+                      id="name"
+                      name="name"
                       type="text"
                       autoComplete="name"
                       required
-                      value={formData.fullName}
+                      value={formData.name}
                       onChange={handleChange}
                       className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                       placeholder="Enter your full name"
@@ -177,7 +177,7 @@ export default function SignupPage() {
                 <button
                   type="button"
                   onClick={nextStep}
-                  disabled={!formData.fullName || !formData.email}
+                  disabled={!formData.name || !formData.email}
                   className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-xl text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 transform hover:-translate-y-0.5"
                 >
                   Continue

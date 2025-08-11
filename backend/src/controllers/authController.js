@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import bcrypt from "bcryptjs";
+import sendEmail from "../utils/sendEmail.js";
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -27,12 +28,22 @@ export const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (user) {
-    // Simulate OTP sending
     const otp = Math.floor(100000 + Math.random() * 900000);
     user.otp = otp;
     await user.save();
 
-    res.status(201).json({ message: "User registered. Verify OTP.", otp });
+    // Send OTP via email
+    await sendEmail({
+      to: email,
+      subject: "QuickCourt - Verify Your Email",
+      html: `
+        <h1>Welcome to QuickCourt!</h1>
+        <p>Your verification code is: <strong>${otp}</strong></p>
+        <p>This code will expire in 10 minutes.</p>
+      `,
+    });
+
+    res.status(201).json({ message: "User registered. Please check your email for OTP verification." });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
