@@ -1,27 +1,38 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import { getPopularVenues } from "../services/api";
 
 export default function Home() {
   const [popularVenues, setPopularVenues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [stats, setStats] = useState({
-    totalVenues: 150,
-    totalBookings: 2500,
-    happyUsers: 1200
+    totalVenues: 0,
+    totalBookings: 0,
+    happyUsers: 0
   });
 
   useEffect(() => {
     const fetchVenues = async () => {
       try {
-        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/venues?limit=6&sort=rating`);
+        setLoading(true);
+        const data = await getPopularVenues(6);
         setPopularVenues(data.venues || []);
-        setLoading(false);
+        
+        // Update stats based on real data
+        setStats({
+          totalVenues: data.total || 0,
+          totalBookings: data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 0,
+          happyUsers: Math.floor((data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 0) * 0.8)
+        });
       } catch (error) {
         console.error("Error fetching venues", error);
+        setError("Failed to load popular venues");
+      } finally {
         setLoading(false);
       }
     };
+    
     fetchVenues();
   }, []);
 
@@ -47,6 +58,24 @@ export default function Home() {
       description: "Competitive rates and transparent pricing"
     }
   ];
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <h2 className="text-xl font-semibold text-gray-700 mb-2">Oops! Something went wrong</h2>
+          <p className="text-gray-500 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen">
@@ -148,7 +177,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-          ) : (
+          ) : popularVenues.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {popularVenues.map((venue) => (
                 <div key={venue._id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2 group">
@@ -188,7 +217,7 @@ export default function Home() {
                         <span className="text-sm text-gray-500 font-normal">/hr</span>
                       </div>
                       <div className="text-sm text-gray-500">
-                        Available today
+                        {venue.bookingCount || 0} bookings
                       </div>
                     </div>
                     
@@ -201,6 +230,12 @@ export default function Home() {
                   </div>
                 </div>
               ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <div className="text-gray-400 text-6xl mb-4">🏟️</div>
+              <h3 className="text-xl font-semibold text-gray-600 mb-2">No venues available yet</h3>
+              <p className="text-gray-500">Check back soon for new sports facilities!</p>
             </div>
           )}
           

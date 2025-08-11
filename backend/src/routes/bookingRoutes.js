@@ -1,16 +1,38 @@
 import express from "express";
 import {
   createBooking,
+  getAllBookings,
+  getBookingById,
+  updateBooking,
   cancelBooking,
-  getBookingDetails
+  completeBooking,
+  getBookingStats,
+  checkCourtAvailability
 } from "../controllers/bookingController.js";
-import { protect } from "../middlewares/authMiddleware.js";
+import { protect, adminOnly, ownerOnly } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Booking Actions
-router.post("/", protect, createBooking);
-router.put("/:id/cancel", protect, cancelBooking);
-router.get("/:id", protect, getBookingDetails);
+// Public endpoints
+router.get("/availability/:courtId", checkCourtAvailability);
+
+// Protected endpoints
+router.use(protect);
+
+// Booking CRUD operations
+router.route("/")
+  .post(createBooking)
+  .get(getAllBookings); // Admin/Owner only
+
+router.route("/:id")
+  .get(getBookingById)
+  .put(updateBooking); // Admin/Owner only
+
+// Booking actions
+router.put("/:id/cancel", cancelBooking);
+router.put("/:id/complete", completeBooking); // Admin/Owner only
+
+// Statistics
+router.get("/stats", getBookingStats); // Admin/Owner only
 
 export default router;

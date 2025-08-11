@@ -1,16 +1,27 @@
 import express from "express";
 import {
   listVenues,
+  searchVenues,
   getVenueById,
-  searchVenues
+  getNearbyVenues,
+  getPopularVenues,
+  getTrendingVenues,
+  getVenueCategories,
+  getVenueAmenities
 } from "../controllers/venueController.js";
-import { protect } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-// Public browsing (can also require login if needed)
+// Public venue browsing and search
 router.get("/", listVenues);
 router.get("/search", searchVenues);
+router.get("/nearby", getNearbyVenues);
+router.get("/popular", getPopularVenues);
+router.get("/trending", getTrendingVenues);
+router.get("/categories", getVenueCategories);
+router.get("/amenities", getVenueAmenities);
+
+// Get specific venue
 router.get("/:id", getVenueById);
 
 export default router;

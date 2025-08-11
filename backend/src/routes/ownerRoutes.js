@@ -1,28 +1,54 @@
 import express from "express";
 import {
   addFacility,
-  // updateFacility,
+  getOwnerFacilities,
+  getOwnerFacilityById,
+  updateFacility,
+  deleteFacility,
   addCourt,
-  // updateCourt,
+  getOwnerCourts,
+  getOwnerCourtById,
+  updateCourt,
+  deleteCourt,
+  setCourtAvailability,
   getOwnerBookings,
-  // setCourtAvailability
+  updateBookingStatus,
+  getOwnerDashboard
 } from "../controllers/ownerController.js";
 import { protect, ownerOnly } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
+// Dashboard
+router.get("/dashboard", protect, ownerOnly, getOwnerDashboard);
+
 // Facility Management
-router.post("/facilities", protect, ownerOnly, addFacility);
-// router.put("/facilities/:id", protect, ownerOnly, updateFacility);
+router.route("/facilities")
+  .post(protect, ownerOnly, addFacility)
+  .get(protect, ownerOnly, getOwnerFacilities);
+
+router.route("/facilities/:id")
+  .get(protect, ownerOnly, getOwnerFacilityById)
+  .put(protect, ownerOnly, updateFacility)
+  .delete(protect, ownerOnly, deleteFacility);
 
 // Court Management
-router.post("/courts", protect, ownerOnly, addCourt);
-// router.put("/courts/:id", protect, ownerOnly, updateCourt);
+router.route("/courts")
+  .post(protect, ownerOnly, addCourt)
+  .get(protect, ownerOnly, getOwnerCourts);
 
-// Availability
-// router.put("/courts/:id/availability", protect, ownerOnly, setCourtAvailability);
+router.route("/courts/:id")
+  .get(protect, ownerOnly, getOwnerCourtById)
+  .put(protect, ownerOnly, updateCourt)
+  .delete(protect, ownerOnly, deleteCourt);
 
-// Booking Overview
-router.get("/bookings", protect, ownerOnly, getOwnerBookings);
+// Court Availability
+router.put("/courts/:id/availability", protect, ownerOnly, setCourtAvailability);
+
+// Booking Management
+router.route("/bookings")
+  .get(protect, ownerOnly, getOwnerBookings);
+
+router.put("/bookings/:id/status", protect, ownerOnly, updateBookingStatus);
 
 export default router;

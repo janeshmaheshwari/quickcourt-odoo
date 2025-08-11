@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { loginUser } from "../services/authService";
+import { loginUser } from "../services/api";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function LoginPage({ setUser }) {
@@ -20,16 +20,35 @@ export default function LoginPage({ setUser }) {
 
     try {
       const data = await loginUser(formData);
-      if (data.success) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.user.role);
-        setUser({ token: data.token, role: data.user.role });
-        navigate("/dashboard");
+      
+      if (data._id) {
+        // Store user data in localStorage
+        localStorage.setItem("token", data.token || "dummy-token");
+        localStorage.setItem("role", data.role || "user");
+        localStorage.setItem("userId", data._id);
+        localStorage.setItem("userName", data.name);
+        
+        setUser({ 
+          token: data.token || "dummy-token", 
+          role: data.role || "user",
+          id: data._id,
+          name: data.name
+        });
+        
+        // Redirect based on role
+        if (data.role === "admin") {
+          navigate("/admin/dashboard");
+        } else if (data.role === "owner") {
+          navigate("/owner/dashboard");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         setError(data.message || "Login failed. Please check your credentials.");
       }
     } catch (err) {
-      setError("An error occurred. Please try again.");
+      console.error("Login error:", err);
+      setError(err.message || "An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
