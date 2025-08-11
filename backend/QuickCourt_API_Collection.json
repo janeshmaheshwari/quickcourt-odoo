@@ -1,0 +1,825 @@
+{
+	"info": {
+		"_postman_id": "quickcourt-api-collection",
+		"name": "QuickCourt API Collection",
+		"description": "Complete API collection for QuickCourt backend - A sports venue booking platform",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12345678"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\",\n  \"avatar\": \"https://example.com/avatar.jpg\",\n  \"role\": \"user\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"register"
+							]
+						},
+						"description": "Register a new user account. Returns OTP for verification."
+					},
+					"response": []
+				},
+				{
+					"name": "Verify OTP",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"otp\": \"123456\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/verify-otp",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"verify-otp"
+							]
+						},
+						"description": "Verify OTP sent to user's email to activate account."
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login user with email and password. Returns user data and sets authentication cookie."
+					},
+					"response": []
+				}
+			],
+			"description": "Authentication endpoints for user registration, OTP verification, and login."
+		},
+		{
+			"name": "User Management",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						},
+						"description": "Get authenticated user's profile information."
+					},
+					"response": []
+				},
+				{
+					"name": "Update User Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"John Updated\",\n  \"avatar\": \"https://example.com/new-avatar.jpg\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/users/profile",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"profile"
+							]
+						},
+						"description": "Update authenticated user's profile information."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Bookings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/users/my-bookings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"users",
+								"my-bookings"
+							]
+						},
+						"description": "Get all bookings made by the authenticated user."
+					},
+					"response": []
+				}
+			],
+			"description": "User profile management and personal booking history."
+		},
+		{
+			"name": "Venue Management",
+			"item": [
+				{
+					"name": "List All Venues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/venues",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"venues"
+							]
+						},
+						"description": "Get list of all available venues (public endpoint)."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Venues",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/venues/search?location=Mumbai&sport=tennis",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"venues",
+								"search"
+							],
+							"query": [
+								{
+									"key": "location",
+									"value": "Mumbai"
+								},
+								{
+									"key": "sport",
+									"value": "tennis"
+								}
+							]
+						},
+						"description": "Search venues by location, sport, or other criteria."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Venue by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/venues/{{venue_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"venues",
+								"{{venue_id}}"
+							]
+						},
+						"description": "Get detailed information about a specific venue."
+					},
+					"response": []
+				}
+			],
+			"description": "Venue browsing and search functionality."
+		},
+		{
+			"name": "Booking Management",
+			"item": [
+				{
+					"name": "Create Booking",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"courtId\": \"{{court_id}}\",\n  \"date\": \"2024-01-15\",\n  \"startTime\": \"10:00\",\n  \"endTime\": \"11:00\",\n  \"sport\": \"tennis\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/bookings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings"
+							]
+						},
+						"description": "Create a new booking for a court at a specific time."
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Booking",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/bookings/{{booking_id}}/cancel",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{booking_id}}",
+								"cancel"
+							]
+						},
+						"description": "Cancel an existing booking."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Booking Details",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/bookings/{{booking_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"bookings",
+								"{{booking_id}}"
+							]
+						},
+						"description": "Get detailed information about a specific booking."
+					},
+					"response": []
+				}
+			],
+			"description": "Booking creation, cancellation, and management."
+		},
+		{
+			"name": "Owner Management",
+			"item": [
+				{
+					"name": "Add Facility",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Tennis Club\",\n  \"description\": \"Premium tennis facility\",\n  \"location\": \"Mumbai\",\n  \"address\": \"123 Sports Street\",\n  \"contactNumber\": \"+91-9876543210\",\n  \"amenities\": [\"parking\", \"shower\", \"equipment\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/owner/facilities",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner",
+								"facilities"
+							]
+						},
+						"description": "Add a new facility (requires owner role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Court",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"facilityId\": \"{{facility_id}}\",\n  \"name\": \"Court 1\",\n  \"sport\": \"tennis\",\n  \"surface\": \"clay\",\n  \"hourlyRate\": 500,\n  \"availability\": {\n    \"monday\": [\"09:00-22:00\"],\n    \"tuesday\": [\"09:00-22:00\"],\n    \"wednesday\": [\"09:00-22:00\"],\n    \"thursday\": [\"09:00-22:00\"],\n    \"friday\": [\"09:00-22:00\"],\n    \"saturday\": [\"09:00-22:00\"],\n    \"sunday\": [\"09:00-22:00\"]\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/owner/courts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner",
+								"courts"
+							]
+						},
+						"description": "Add a new court to a facility (requires owner role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Owner Bookings",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/owner/bookings",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner",
+								"bookings"
+							]
+						},
+						"description": "Get all bookings for facilities owned by the authenticated user."
+					},
+					"response": []
+				}
+			],
+			"description": "Facility and court management for venue owners."
+		},
+		{
+			"name": "Owner Venue Management",
+			"item": [
+				{
+					"name": "Add Venue",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Sports Complex\",\n  \"description\": \"Multi-sport facility\",\n  \"location\": \"Delhi\",\n  \"address\": \"456 Sports Avenue\",\n  \"contactNumber\": \"+91-9876543211\",\n  \"amenities\": [\"parking\", \"cafeteria\", \"locker-rooms\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/owner-venue/venues",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner-venue",
+								"venues"
+							]
+						},
+						"description": "Add a new venue (requires owner role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Venue",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Sports Complex\",\n  \"description\": \"Enhanced multi-sport facility\",\n  \"amenities\": [\"parking\", \"cafeteria\", \"locker-rooms\", \"gym\"]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/owner-venue/venues/{{venue_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner-venue",
+								"venues",
+								"{{venue_id}}"
+							]
+						},
+						"description": "Update venue information (requires owner role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Court to Venue",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Basketball Court 1\",\n  \"sport\": \"basketball\",\n  \"surface\": \"indoor\",\n  \"hourlyRate\": 800,\n  \"availability\": {\n    \"monday\": [\"06:00-23:00\"],\n    \"tuesday\": [\"06:00-23:00\"],\n    \"wednesday\": [\"06:00-23:00\"],\n    \"thursday\": [\"06:00-23:00\"],\n    \"friday\": [\"06:00-23:00\"],\n    \"saturday\": [\"06:00-23:00\"],\n    \"sunday\": [\"06:00-23:00\"]\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/owner-venue/venues/{{venue_id}}/courts",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner-venue",
+								"venues",
+								"{{venue_id}}",
+								"courts"
+							]
+						},
+						"description": "Add a new court to a specific venue (requires owner role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Court",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Updated Basketball Court 1\",\n  \"hourlyRate\": 900,\n  \"surface\": \"indoor\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/owner-venue/courts/{{court_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner-venue",
+								"courts",
+								"{{court_id}}"
+							]
+						},
+						"description": "Update court information (requires owner role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Set Court Availability",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"availability\": {\n    \"monday\": [\"08:00-22:00\"],\n    \"tuesday\": [\"08:00-22:00\"],\n    \"wednesday\": [\"08:00-22:00\"],\n    \"thursday\": [\"08:00-22:00\"],\n    \"friday\": [\"08:00-22:00\"],\n    \"saturday\": [\"09:00-21:00\"],\n    \"sunday\": [\"09:00-21:00\"]\n  }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/owner-venue/courts/{{court_id}}/availability",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"owner-venue",
+								"courts",
+								"{{court_id}}",
+								"availability"
+							]
+						},
+						"description": "Update court availability schedule (requires owner role)."
+					},
+					"response": []
+				}
+			],
+			"description": "Advanced venue and court management for owners."
+		},
+		{
+			"name": "Admin Management",
+			"item": [
+				{
+					"name": "Get Admin Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/stats",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"stats"
+							]
+						},
+						"description": "Get dashboard statistics (requires admin role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Approve Facility",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/facilities/{{facility_id}}/approve",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"facilities",
+								"{{facility_id}}",
+								"approve"
+							]
+						},
+						"description": "Approve a pending facility (requires admin role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Reject Facility",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/facilities/{{facility_id}}/reject",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"facilities",
+								"{{facility_id}}",
+								"reject"
+							]
+						},
+						"description": "Reject a pending facility (requires admin role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users"
+							]
+						},
+						"description": "Get list of all users (requires admin role)."
+					},
+					"response": []
+				},
+				{
+					"name": "Toggle User Ban",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/admin/users/{{user_id}}/ban",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"admin",
+								"users",
+								"{{user_id}}",
+								"ban"
+							]
+						},
+						"description": "Ban or unban a user (requires admin role)."
+					},
+					"response": []
+				}
+			],
+			"description": "Administrative functions for platform management."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "your_jwt_token_here",
+			"type": "string"
+		},
+		{
+			"key": "venue_id",
+			"value": "venue_id_here",
+			"type": "string"
+		},
+		{
+			"key": "court_id",
+			"value": "court_id_here",
+			"type": "string"
+		},
+		{
+			"key": "facility_id",
+			"value": "facility_id_here",
+			"type": "string"
+		},
+		{
+			"key": "booking_id",
+			"value": "booking_id_here",
+			"type": "string"
+		},
+		{
+			"key": "user_id",
+			"value": "user_id_here",
+			"type": "string"
+		}
+	]
+}
