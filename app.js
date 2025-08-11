@@ -12,6 +12,9 @@ class QuickCourtApp {
         this.trie = new TrieSearch();
         this.bookingScheduler = new IntervalScheduler();
 
+        // Theme
+        this.initializeTheme();
+
         // Load application data
         this.loadApplicationData();
 
@@ -24,6 +27,66 @@ class QuickCourtApp {
         this.checkAuthSession();
 
         this.initBrowserNavigation();
+        
+        // Initialize enhanced features
+        this.initializeRatingSystem();
+    }
+
+    // Theme initialization and toggle
+    initializeTheme() {
+        const stored = localStorage.getItem('quickcourt_theme');
+        const html = document.documentElement;
+        // default to light
+        const theme = stored === 'dark' ? 'dark' : 'light';
+        html.setAttribute('data-color-scheme', theme);
+        this.updateThemeToggleIcon(theme);
+    }
+
+    toggleTheme() {
+        const html = document.documentElement;
+        const current = html.getAttribute('data-color-scheme') || 'light';
+        const next = current === 'light' ? 'dark' : 'light';
+        html.setAttribute('data-color-scheme', next);
+        localStorage.setItem('quickcourt_theme', next);
+        this.updateThemeToggleIcon(next);
+    }
+
+    updateThemeToggleIcon(theme) {
+        const icon = document.getElementById('themeToggleIcon');
+        if (!icon) return;
+        icon.className = theme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
+        const btn = document.getElementById('themeToggleBtn');
+        if (btn) btn.title = theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode';
+        // Refresh charts for theme contrast
+        this.refreshChartsForTheme();
+    }
+
+    refreshChartsForTheme() {
+        const theme = document.documentElement.getAttribute('data-color-scheme') || 'light';
+        const textColor = getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim() || (theme === 'dark' ? '#e5e7eb' : '#111827');
+        const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--color-card-border').trim() || (theme === 'dark' ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.08)');
+
+        // Update revenue chart
+        if (this._revenueChart) {
+            this._revenueChart.options.scales.x.ticks.color = textColor;
+            this._revenueChart.options.scales.y.ticks.color = textColor;
+            this._revenueChart.options.scales.x.grid.color = gridColor;
+            this._revenueChart.options.scales.y.grid.color = gridColor;
+            this._revenueChart.update();
+        }
+        // Update peak hours chart
+        if (this._peakHoursChart) {
+            this._peakHoursChart.options.scales.x.ticks.color = textColor;
+            this._peakHoursChart.options.scales.y.ticks.color = textColor;
+            this._peakHoursChart.options.scales.x.grid.color = gridColor;
+            this._peakHoursChart.options.scales.y.grid.color = gridColor;
+            this._peakHoursChart.update();
+        }
+        // Update platform chart legend
+        if (this._platformChart) {
+            this._platformChart.options.plugins.legend.labels.color = textColor;
+            this._platformChart.update();
+        }
     }
 
     // Load sample data
@@ -42,6 +105,11 @@ class QuickCourtApp {
                 total_reviews: 156,
                 status: "approved",
                 amenities: ["Parking", "Locker Room", "Cafeteria", "AC", "WiFi", "First Aid"],
+                photos: [
+                    { id: 1, url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop", caption: "Main Entrance" },
+                    { id: 2, url: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop", caption: "Badminton Courts" },
+                    { id: 3, url: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&h=300&fit=crop", caption: "Tennis Courts" }
+                ],
                 courts: [
                     {
                         id: 1,
@@ -74,6 +142,10 @@ class QuickCourtApp {
                 total_reviews: 203,
                 status: "approved",
                 amenities: ["Parking", "Locker Room", "Pro Shop", "Coaching", "AC"],
+                photos: [
+                    { id: 4, url: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop", caption: "Football Ground" },
+                    { id: 5, url: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop", caption: "Basketball Court" }
+                ],
                 courts: [
                     {
                         id: 3,
@@ -106,6 +178,10 @@ class QuickCourtApp {
                 total_reviews: 89,
                 status: "approved",
                 amenities: ["Parking", "Locker Room", "Cafeteria", "Shower", "Equipment Rental"],
+                photos: [
+                    { id: 6, url: "https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400&h=300&fit=crop", caption: "Cricket Nets" },
+                    { id: 7, url: "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=400&h=300&fit=crop", caption: "Badminton Courts" }
+                ],
                 courts: [
                     {
                         id: 5,
@@ -138,6 +214,10 @@ class QuickCourtApp {
                 total_reviews: 267,
                 status: "approved",
                 amenities: ["Parking", "Pro Shop", "Coaching", "Tournament Facilities", "Physiotherapy"],
+                photos: [
+                    { id: 8, url: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&h=300&fit=crop", caption: "Center Court" },
+                    { id: 9, url: "https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=400&h=300&fit=crop", caption: "Practice Courts" }
+                ],
                 courts: [
                     {
                         id: 7,
@@ -170,6 +250,10 @@ class QuickCourtApp {
                 total_reviews: 134,
                 status: "approved",
                 amenities: ["Parking", "Locker Room", "Water Facility", "Basic First Aid"],
+                photos: [
+                    { id: 10, url: "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=400&h=300&fit=crop", caption: "Basketball Court" },
+                    { id: 11, url: "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&h=300&fit=crop", caption: "Volleyball Court" }
+                ],
                 courts: [
                     {
                         id: 9,
@@ -191,10 +275,28 @@ class QuickCourtApp {
             }
         ];
 
+        // Add pending facilities for admin approval
+        this.pendingFacilities = [
+            {
+                id: 6,
+                name: "New Sports Center",
+                description: "New facility awaiting approval",
+                address: "Electronic City, Bangalore",
+                phone: "+91-80-99999999",
+                email: "info@newsports.com",
+                status: "pending",
+                submitted_date: "2025-01-15",
+                photos: [
+                    { id: 12, url: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=300&fit=crop", caption: "Facility Photo" }
+                ]
+            }
+        ];
+
         this.users = [
-            { id: 1, email: "admin@quickcourt.com", full_name: "Admin User", role: "admin" },
-            { id: 2, email: "owner@elitesports.com", full_name: "Elite Sports Owner", role: "facility_owner" },
-            { id: 3, email: "john.player@gmail.com", full_name: "John Player", role: "user" }
+            { id: 1, email: "admin@quickcourt.com", full_name: "Admin User", role: "admin", status: "active" },
+            { id: 2, email: "owner@elitesports.com", full_name: "Elite Sports Owner", role: "facility_owner", status: "active" },
+            { id: 3, email: "john.player@gmail.com", full_name: "John Player", role: "user", status: "active" },
+            { id: 4, email: "jane.sports@gmail.com", full_name: "Jane Sports", role: "user", status: "active" }
         ];
 
         this.bookings = [
@@ -223,6 +325,49 @@ class QuickCourtApp {
                 venue_name: "Champions Arena",
                 court_name: "Football Ground",
                 sport_type: "football"
+            }
+        ];
+
+        // Add reviews data
+        this.reviews = [
+            {
+                id: 1,
+                venue_id: 1,
+                user_id: 3,
+                user_name: "John Player",
+                rating: 5,
+                title: "Excellent Facility",
+                text: "Great courts and friendly staff. Highly recommended!",
+                date: "2025-01-10"
+            },
+            {
+                id: 2,
+                venue_id: 1,
+                user_id: 4,
+                user_name: "Jane Sports",
+                rating: 4,
+                title: "Good Experience",
+                text: "Courts are well maintained. Good value for money.",
+                date: "2025-01-08"
+            }
+        ];
+
+        // Add matches data
+        this.matches = [
+            {
+                id: 1,
+                creator_id: 3,
+                creator_name: "John Player",
+                sport_type: "badminton",
+                skill_level: "intermediate",
+                players_needed: 2,
+                current_players: 1,
+                match_date: "2025-01-20",
+                match_time: "18:00",
+                venue_id: 1,
+                venue_name: "Elite Sports Complex",
+                notes: "Looking for intermediate players for doubles",
+                status: "open"
             }
         ];
 
@@ -524,19 +669,94 @@ class QuickCourtApp {
 
     // Load owner dashboard
     loadOwnerDashboard() {
-        setTimeout(() => this.createRevenueChart(), 200);
+        setTimeout(() => {
+            this.createRevenueChart();
+            this.createPeakHoursChart();
+            this.initializeBookingCalendar();
+        }, 200);
     }
 
     // Load admin dashboard
     loadAdminDashboard() {
         setTimeout(() => this.createPlatformChart(), 200);
+        this.loadPendingFacilities();
+        this.loadUsersList();
+    }
+
+    // Load pending facilities for admin approval
+    loadPendingFacilities() {
+        const pendingContainer = document.getElementById('pendingFacilities');
+        if (!pendingContainer) return;
+
+        if (this.pendingFacilities.length === 0) {
+            pendingContainer.innerHTML = '<p class="text-center text-muted">No pending facilities for approval.</p>';
+            return;
+        }
+
+        pendingContainer.innerHTML = this.pendingFacilities.map(facility => `
+            <div class="facility-approval-item">
+                <div class="facility-approval-header">
+                    <div>
+                        <h6 class="facility-name">${facility.name}</h6>
+                        <p class="mb-1">${facility.description}</p>
+                        <small class="text-muted">
+                            <i class="fas fa-map-marker-alt"></i> ${facility.address}<br>
+                            <i class="fas fa-phone"></i> ${facility.phone}<br>
+                            <i class="fas fa-envelope"></i> ${facility.email}
+                        </small>
+                    </div>
+                    <span class="facility-status pending">Pending Approval</span>
+                </div>
+                <div class="facility-approval-actions">
+                    <button class="btn btn--primary btn--sm" onclick="approveFacility(${facility.id})">
+                        <i class="fas fa-check"></i> Approve
+                    </button>
+                    <button class="btn btn--secondary btn--sm" onclick="rejectFacility(${facility.id})">
+                        <i class="fas fa-times"></i> Reject
+                    </button>
+                    <button class="btn btn--outline btn--sm" onclick="viewFacilityPhotos(${facility.id})">
+                        <i class="fas fa-images"></i> View Photos
+                    </button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    // Load users list for admin management
+    loadUsersList() {
+        const usersContainer = document.getElementById('usersList');
+        if (!usersContainer) return;
+
+        usersContainer.innerHTML = this.users.map(user => `
+            <div class="user-item">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        ${user.full_name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="user-details">
+                        <h6>${user.full_name}</h6>
+                        <small>${user.email} • ${user.role.replace('_', ' ')}</small>
+                    </div>
+                </div>
+                <div class="user-actions">
+                    <button class="btn btn--outline btn--sm" onclick="viewUserBookings(${user.id})">
+                        <i class="fas fa-calendar"></i> Bookings
+                    </button>
+                    <button class="btn btn--secondary btn--sm" onclick="toggleUserStatus(${user.id})">
+                        ${user.status === 'active' ? '<i class="fas fa-ban"></i> Ban' : '<i class="fas fa-check"></i> Unban'}
+                    </button>
+                </div>
+            </div>
+        `).join('');
     }
 
     // Create revenue chart
     createRevenueChart() {
         const ctx = document.getElementById('revenueChart');
         if (ctx && ctx.getContext) {
-            new Chart(ctx, {
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim() || '#111827';
+            const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--color-card-border').trim() || 'rgba(0,0,0,0.08)';
+            this._revenueChart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
@@ -553,19 +773,52 @@ class QuickCourtApp {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            display: false
-                        }
+                        legend: { display: false }
                     },
                     scales: {
+                        x: {
+                            ticks: { color: textColor },
+                            grid: { color: gridColor }
+                        },
                         y: {
                             beginAtZero: true,
                             ticks: {
-                                callback: function (value) {
-                                    return '₹' + value.toLocaleString();
-                                }
-                            }
+                                color: textColor,
+                                callback: function (value) { return '₹' + value.toLocaleString(); }
+                            },
+                            grid: { color: gridColor }
                         }
+                    }
+                }
+            });
+        }
+    }
+
+    // Create peak hours chart
+    createPeakHoursChart() {
+        const ctx = document.getElementById('peakHoursChart');
+        if (ctx && ctx.getContext) {
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim() || '#111827';
+            const gridColor = getComputedStyle(document.documentElement).getPropertyValue('--color-card-border').trim() || 'rgba(0,0,0,0.08)';
+            this._peakHoursChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['6AM', '8AM', '10AM', '12PM', '2PM', '4PM', '6PM', '8PM', '10PM'],
+                    datasets: [{
+                        label: 'Bookings',
+                        data: [5, 8, 12, 15, 18, 25, 30, 22, 10],
+                        backgroundColor: 'rgba(31, 184, 205, 0.8)',
+                        borderColor: '#1FB8CD',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                        y: { beginAtZero: true, ticks: { color: textColor }, grid: { color: gridColor } }
                     }
                 }
             });
@@ -576,7 +829,8 @@ class QuickCourtApp {
     createPlatformChart() {
         const ctx = document.getElementById('platformChart');
         if (ctx && ctx.getContext) {
-            new Chart(ctx, {
+            const textColor = getComputedStyle(document.documentElement).getPropertyValue('--color-text').trim() || '#111827';
+            this._platformChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
                     labels: ['Badminton', 'Tennis', 'Football', 'Basketball', 'Cricket'],
@@ -591,9 +845,7 @@ class QuickCourtApp {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
+                        legend: { position: 'bottom', labels: { color: textColor } }
                     }
                 }
             });
@@ -761,10 +1013,19 @@ class QuickCourtApp {
     // Create venue card HTML
     createVenueCard(venue) {
         const stars = '★'.repeat(Math.floor(venue.rating)) + '☆'.repeat(5 - Math.floor(venue.rating));
+        const mainPhoto = venue.photos && venue.photos.length > 0 ? venue.photos[0].url : '';
+        const minPrice = Math.min(...venue.courts.map(c => c.price_per_hour));
+        const sportTypes = [...new Set(venue.courts.map(c => c.sport_type))];
 
         return `
             <div class="col-lg-4 col-md-6">
                 <div class="venue-card">
+                    ${mainPhoto ? `
+                        <div class="venue-card-image" style="background-image: url('${mainPhoto}')">
+                            <div class="venue-price-badge">From ₹${minPrice}/hr</div>
+                            <div class="venue-sport-badge">${sportTypes.join(', ')}</div>
+                        </div>
+                    ` : ''}
                     <div class="venue-card-body">
                         <h5 class="venue-title">${venue.name}</h5>
                         <div class="venue-rating">
@@ -789,12 +1050,22 @@ class QuickCourtApp {
                                 </div>
                             `).join('')}
                         </div>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 mb-3">
                             <button class="btn btn--outline flex-fill" onclick="window.app.showVenueDetails(${venue.id})">
                                 View Details
                             </button>
                             <button class="btn btn--primary flex-fill" onclick="window.app.quickBook(${venue.id})">
                                 Book Now
+                            </button>
+                        </div>
+                        <div class="d-flex gap-2">
+                            ${venue.photos && venue.photos.length > 0 ? `
+                                <button class="btn btn--outline btn--sm flex-fill" onclick="window.app.showPhotoGallery(${venue.id})">
+                                    <i class="fas fa-images"></i> Photos
+                                </button>
+                            ` : ''}
+                            <button class="btn btn--outline btn--sm flex-fill" onclick="window.app.showReviewModal(${venue.id})">
+                                <i class="fas fa-star"></i> Review
                             </button>
                         </div>
                     </div>
@@ -831,6 +1102,23 @@ class QuickCourtApp {
                 `<span class="amenity-badge">${amenity}</span>`
             ).join('')}
                         </div>
+                        
+                        ${venue.photos && venue.photos.length > 0 ? `
+                            <h6 class="mt-4">Photos</h6>
+                            <div class="venue-photo-grid">
+                                ${venue.photos.slice(0, 4).map(photo => `
+                                    <div class="venue-photo-item" onclick="window.app.showPhotoGallery(${venue.id})">
+                                        <img src="${photo.url}" alt="${photo.caption}">
+                                        <div class="venue-photo-overlay">${photo.caption}</div>
+                                    </div>
+                                `).join('')}
+                                ${venue.photos.length > 4 ? `
+                                    <div class="venue-photo-item" onclick="window.app.showPhotoGallery(${venue.id})">
+                                        <div class="venue-photo-overlay">+${venue.photos.length - 4} more</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        ` : ''}
                     </div>
                     <div class="col-md-6">
                         <h6>Available Courts</h6>
@@ -849,6 +1137,14 @@ class QuickCourtApp {
                                 </div>
                             </div>
                         `).join('')}
+                        
+                        <div class="reviews-section">
+                            <h6>Reviews</h6>
+                            ${this.getVenueReviews(venue.id)}
+                            <button class="btn btn--outline btn--sm mt-3" onclick="window.app.showReviewModal(${venue.id})">
+                                <i class="fas fa-star"></i> Write a Review
+                            </button>
+                        </div>
                     </div>
                 </div>
             `;
@@ -857,6 +1153,47 @@ class QuickCourtApp {
         if (modal && bootstrap.Modal) {
             new bootstrap.Modal(modal).show();
         }
+    }
+
+    // Get venue reviews
+    getVenueReviews(venueId) {
+        const venueReviews = this.reviews.filter(r => r.venue_id === venueId);
+        
+        if (venueReviews.length === 0) {
+            return '<p class="text-muted">No reviews yet. Be the first to review!</p>';
+        }
+
+        return venueReviews.map(review => `
+            <div class="review-item">
+                <div class="review-header">
+                    <span class="review-author">${review.user_name}</span>
+                    <span class="review-date">${review.date}</span>
+                </div>
+                <div class="review-rating">
+                    ${'★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)}
+                </div>
+                <div class="review-title">${review.title}</div>
+                <div class="review-text">${review.text}</div>
+            </div>
+        `).join('');
+    }
+
+    // Previous month in calendar
+    previousMonth() {
+        this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() - 1);
+        this.updateCalendar();
+    }
+
+    // Next month in calendar
+    nextMonth() {
+        this.currentCalendarDate.setMonth(this.currentCalendarDate.getMonth() + 1);
+        this.updateCalendar();
+    }
+
+    // Select calendar date
+    selectCalendarDate(dateString) {
+        console.log('Selected date:', dateString);
+        // You can implement date-specific actions here
     }
 
     // Quick book (first available court)
@@ -997,35 +1334,58 @@ class QuickCourtApp {
             return;
         }
 
-        // Create booking
-        const newBooking = {
-            id: this.bookings.length + 1,
+        // Show payment modal instead of direct confirmation
+        this.showPaymentModal();
+    }
+
+    // Submit review
+    submitReview() {
+        const rating = document.querySelectorAll('.rating-input i.filled').length;
+        const title = document.getElementById('reviewTitle').value;
+        const text = document.getElementById('reviewText').value;
+
+        if (rating === 0) {
+            alert('Please select a rating');
+            return;
+        }
+
+        if (!title || !text) {
+            alert('Please fill all review fields');
+            return;
+        }
+
+        // Create new review
+        const newReview = {
+            id: this.reviews.length + 1,
+            venue_id: this.currentReviewVenueId,
             user_id: this.currentUser.id,
-            court_id: this.selectedCourtForBooking.courtId,
-            booking_date: date,
-            start_time: startTime,
-            end_time: endTime,
-            total_price: this.selectedCourtForBooking.pricePerHour * duration,
-            status: 'confirmed',
-            venue_name: this.selectedCourtForBooking.venueName,
-            court_name: this.selectedCourtForBooking.courtName,
-            sport_type: 'court'
+            user_name: this.currentUser.full_name,
+            rating: rating,
+            title: title,
+            text: text,
+            date: new Date().toISOString().split('T')[0]
         };
 
-        this.bookings.push(newBooking);
+        this.reviews.push(newReview);
 
-        // Close modal and show success
-        const modal = document.getElementById('bookingModal');
+        // Update venue rating
+        const venue = this.venues.find(v => v.id === this.currentReviewVenueId);
+        if (venue) {
+            const venueReviews = this.reviews.filter(r => r.venue_id === venue.id);
+            venue.rating = (venueReviews.reduce((sum, r) => sum + r.rating, 0) / venueReviews.length).toFixed(1);
+            venue.total_reviews = venueReviews.length;
+        }
+
+        alert('Review submitted successfully!');
+        
+        const modal = document.getElementById('reviewModal');
         if (modal && bootstrap.Modal) {
             bootstrap.Modal.getInstance(modal)?.hide();
         }
 
-        alert('Booking confirmed successfully!');
-
-        // Refresh dashboard if on user dashboard
-        if (this.currentSection === 'userDashboard') {
-            this.loadUserDashboard();
-        }
+        // Reset form
+        document.getElementById('reviewForm').reset();
+        document.querySelectorAll('.rating-input i').forEach(star => star.classList.remove('filled'));
     }
 
     // Toggle authentication mode
@@ -1061,6 +1421,426 @@ class QuickCourtApp {
         if (userMenuDropdown) userMenuDropdown.style.display = 'none';
 
         this.showSection('landing');
+    }
+
+    // Show photo gallery
+    showPhotoGallery(venueId) {
+        const venue = this.venues.find(v => v.id === venueId);
+        if (!venue || !venue.photos) return;
+
+        const modal = document.getElementById('photoGalleryModal');
+        const carouselInner = document.getElementById('carouselInner');
+        const carouselIndicators = document.getElementById('carouselIndicators');
+
+        if (carouselInner && carouselIndicators) {
+            carouselInner.innerHTML = venue.photos.map((photo, index) => `
+                <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                    <img src="${photo.url}" class="d-block w-100" alt="${photo.caption}">
+                    <div class="carousel-caption">
+                        <h5>${photo.caption}</h5>
+                    </div>
+                </div>
+            `).join('');
+
+            carouselIndicators.innerHTML = venue.photos.map((_, index) => `
+                <button type="button" data-bs-target="#photoGalleryCarousel" data-bs-slide-to="${index}" 
+                        class="${index === 0 ? 'active' : ''}" aria-current="${index === 0 ? 'true' : 'false'}"></button>
+            `).join('');
+        }
+
+        if (modal && bootstrap.Modal) {
+            new bootstrap.Modal(modal).show();
+        }
+    }
+
+    // Show review modal
+    showReviewModal(venueId) {
+        this.currentReviewVenueId = venueId;
+        const modal = document.getElementById('reviewModal');
+        if (modal && bootstrap.Modal) {
+            new bootstrap.Modal(modal).show();
+        }
+    }
+
+    // Initialize rating system
+    initializeRatingSystem() {
+        const ratingStars = document.querySelectorAll('.rating-input i');
+        let selectedRating = 0;
+
+        ratingStars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.dataset.rating);
+                selectedRating = rating;
+                
+                // Update visual state
+                ratingStars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('filled');
+                    } else {
+                        s.classList.remove('filled');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseenter', () => {
+                const rating = parseInt(star.dataset.rating);
+                ratingStars.forEach((s, index) => {
+                    if (index < rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+
+            star.addEventListener('mouseleave', () => {
+                ratingStars.forEach(s => s.classList.remove('active'));
+                ratingStars.forEach((s, index) => {
+                    if (index < selectedRating) {
+                        s.classList.add('filled');
+                    } else {
+                        s.classList.remove('filled');
+                    }
+                });
+            });
+        });
+    }
+
+    // Show match modal
+    showMatchModal() {
+        if (!this.currentUser) {
+            alert('Please login to create or join matches');
+            this.showSection('auth');
+            return;
+        }
+
+        this.loadAvailableMatches();
+        const modal = document.getElementById('matchModal');
+        if (modal && bootstrap.Modal) {
+            new bootstrap.Modal(modal).show();
+        }
+    }
+
+    // Load available matches
+    loadAvailableMatches() {
+        const matchesContainer = document.getElementById('availableMatches');
+        if (!matchesContainer) return;
+
+        const availableMatches = this.matches.filter(match => 
+            match.status === 'open' && match.creator_id !== this.currentUser.id
+        );
+
+        if (availableMatches.length === 0) {
+            matchesContainer.innerHTML = '<p class="text-center text-muted">No available matches at the moment.</p>';
+            return;
+        }
+
+        matchesContainer.innerHTML = availableMatches.map(match => `
+            <div class="available-match">
+                <div class="match-info">
+                    <span class="match-sport">${match.sport_type}</span>
+                    <span class="match-skill">${match.skill_level}</span>
+                </div>
+                <div class="match-details">
+                    <p><i class="fas fa-calendar"></i> ${match.match_date} at ${match.match_time}</p>
+                    <p><i class="fas fa-users"></i> ${match.current_players}/${match.players_needed} players</p>
+                    <p><i class="fas fa-map-marker-alt"></i> ${match.venue_name}</p>
+                    <p><i class="fas fa-user"></i> Created by ${match.creator_name}</p>
+                    ${match.notes ? `<p><i class="fas fa-sticky-note"></i> ${match.notes}</p>` : ''}
+                </div>
+                <button class="btn btn--primary btn--sm" onclick="joinMatch(${match.id})">
+                    <i class="fas fa-plus"></i> Join Match
+                </button>
+            </div>
+        `).join('');
+    }
+
+    // Create new match
+    createMatch() {
+        const sportType = document.getElementById('matchSportType').value;
+        const skillLevel = document.getElementById('matchSkillLevel').value;
+        const playersNeeded = parseInt(document.getElementById('playersNeeded').value);
+        const matchDate = document.getElementById('matchDate').value;
+        const matchTime = document.getElementById('matchTime').value;
+        const notes = document.getElementById('matchNotes').value;
+
+        if (!sportType || !skillLevel || !playersNeeded || !matchDate || !matchTime) {
+            alert('Please fill all required fields');
+            return;
+        }
+
+        const newMatch = {
+            id: this.matches.length + 1,
+            creator_id: this.currentUser.id,
+            creator_name: this.currentUser.full_name,
+            sport_type: sportType,
+            skill_level: skillLevel,
+            players_needed: playersNeeded,
+            current_players: 1,
+            match_date: matchDate,
+            match_time: matchTime,
+            venue_id: 1, // Default venue for demo
+            venue_name: "Elite Sports Complex",
+            notes: notes,
+            status: 'open'
+        };
+
+        this.matches.push(newMatch);
+        alert('Match created successfully!');
+        
+        const modal = document.getElementById('matchModal');
+        if (modal && bootstrap.Modal) {
+            bootstrap.Modal.getInstance(modal)?.hide();
+        }
+    }
+
+    // Join existing match
+    joinMatch(matchId) {
+        const match = this.matches.find(m => m.id === matchId);
+        if (!match) return;
+
+        if (match.current_players >= match.players_needed) {
+            alert('This match is already full');
+            return;
+        }
+
+        match.current_players++;
+        if (match.current_players >= match.players_needed) {
+            match.status = 'full';
+        }
+
+        alert('Successfully joined the match!');
+        this.loadAvailableMatches();
+    }
+
+    // Show payment modal
+    showPaymentModal() {
+        if (!this.selectedCourtForBooking) return;
+
+        // Populate payment summary
+        const date = document.getElementById('bookingDate')?.value;
+        const startTime = document.getElementById('bookingStartTime')?.value;
+        const duration = parseInt(document.getElementById('bookingDuration')?.value || 1);
+
+        if (date && startTime && duration) {
+            document.getElementById('paymentVenueName').textContent = this.selectedCourtForBooking.venueName;
+            document.getElementById('paymentCourtName').textContent = this.selectedCourtForBooking.courtName;
+            document.getElementById('paymentDateTime').textContent = `${date} at ${startTime}`;
+            document.getElementById('paymentDuration').textContent = `${duration} hour(s)`;
+            document.getElementById('paymentTotal').textContent = `₹${this.selectedCourtForBooking.pricePerHour * duration}`;
+        }
+
+        const modal = document.getElementById('paymentModal');
+        if (modal && bootstrap.Modal) {
+            bootstrap.Modal.getInstance(document.getElementById('bookingModal'))?.hide();
+            new bootstrap.Modal(modal).show();
+        }
+    }
+
+    // Process payment
+    processPayment() {
+        const cardNumber = document.getElementById('cardNumber').value;
+        const expiryDate = document.getElementById('expiryDate').value;
+        const cvv = document.getElementById('cvv').value;
+        const cardholderName = document.getElementById('cardholderName').value;
+
+        if (!cardNumber || !expiryDate || !cvv || !cardholderName) {
+            alert('Please fill all payment details');
+            return;
+        }
+
+        // Simulate payment processing
+        const submitBtn = document.querySelector('#paymentModal .btn--primary');
+        const originalText = submitBtn.textContent;
+        submitBtn.innerHTML = '<div class="loading"></div> Processing...';
+        submitBtn.disabled = true;
+
+        setTimeout(() => {
+            // Simulate successful payment
+            alert('Payment successful! Your booking has been confirmed.');
+            
+            // Create the actual booking
+            this.createBookingAfterPayment();
+            
+            // Close payment modal
+            const modal = document.getElementById('paymentModal');
+            if (modal && bootstrap.Modal) {
+                bootstrap.Modal.getInstance(modal)?.hide();
+            }
+
+            // Reset form
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+            document.getElementById('paymentForm').reset();
+
+            // Refresh dashboard
+            if (this.currentSection === 'userDashboard') {
+                this.loadUserDashboard();
+            }
+        }, 2000);
+    }
+
+    // Create booking after successful payment
+    createBookingAfterPayment() {
+        const date = document.getElementById('bookingDate')?.value;
+        const startTime = document.getElementById('bookingStartTime')?.value;
+        const duration = parseInt(document.getElementById('bookingDuration')?.value || 1);
+
+        if (!date || !startTime || !duration || !this.selectedCourtForBooking) return;
+
+        // Calculate end time
+        const [startHour, startMinute] = startTime.split(':').map(Number);
+        const endHour = startHour + duration;
+        const endTime = `${endHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}`;
+
+        // Create booking
+        const newBooking = {
+            id: this.bookings.length + 1,
+            user_id: this.currentUser.id,
+            court_id: this.selectedCourtForBooking.courtId,
+            booking_date: date,
+            start_time: startTime,
+            end_time: endTime,
+            total_price: this.selectedCourtForBooking.pricePerHour * duration,
+            status: 'confirmed',
+            venue_name: this.selectedCourtForBooking.venueName,
+            court_name: this.selectedCourtForBooking.courtName,
+            sport_type: 'court'
+        };
+
+        this.bookings.push(newBooking);
+        this.selectedCourtForBooking = null;
+    }
+
+    // Show add court modal
+    showAddCourtModal() {
+        const modal = document.getElementById('addCourtModal');
+        if (modal && bootstrap.Modal) {
+            new bootstrap.Modal(modal).show();
+        }
+    }
+
+    // Add new court
+    addNewCourt() {
+        const name = document.getElementById('newCourtName').value;
+        const sportType = document.getElementById('newCourtSportType').value;
+        const price = parseInt(document.getElementById('newCourtPrice').value);
+        const startTime = document.getElementById('newCourtStartTime').value;
+        const endTime = document.getElementById('newCourtEndTime').value;
+
+        if (!name || !sportType || !price || !startTime || !endTime) {
+            alert('Please fill all fields');
+            return;
+        }
+
+        // Add court to the first venue (demo logic)
+        const newCourt = {
+            id: this.venues[0].courts.length + 1,
+            name: name,
+            sport_type: sportType,
+            price_per_hour: price,
+            operating_start_time: startTime,
+            operating_end_time: endTime
+        };
+
+        this.venues[0].courts.push(newCourt);
+        alert('Court added successfully!');
+        
+        const modal = document.getElementById('addCourtModal');
+        if (modal && bootstrap.Modal) {
+            bootstrap.Modal.getInstance(modal)?.hide();
+        }
+    }
+
+    // Show facility edit modal
+    showFacilityEditModal() {
+        const venue = this.venues[0]; // Demo: edit first venue
+        if (!venue) return;
+
+        document.getElementById('editFacilityName').value = venue.name;
+        document.getElementById('editFacilityDescription').value = venue.description;
+        document.getElementById('editFacilityPhone').value = venue.phone;
+        document.getElementById('editFacilityEmail').value = venue.email;
+        document.getElementById('editFacilityAddress').value = venue.address;
+        document.getElementById('editFacilityAmenities').value = venue.amenities.join(', ');
+
+        const modal = document.getElementById('editFacilityModal');
+        if (modal && bootstrap.Modal) {
+            new bootstrap.Modal(modal).show();
+        }
+    }
+
+    // Update facility
+    updateFacility() {
+        const name = document.getElementById('editFacilityName').value;
+        const description = document.getElementById('editFacilityDescription').value;
+        const phone = document.getElementById('editFacilityPhone').value;
+        const email = document.getElementById('editFacilityEmail').value;
+        const address = document.getElementById('editFacilityAddress').value;
+        const amenities = document.getElementById('editFacilityAmenities').value.split(',').map(a => a.trim());
+
+        if (!name || !description || !phone || !email || !address) {
+            alert('Please fill all required fields');
+            return;
+        }
+
+        // Update venue (demo logic)
+        const venue = this.venues[0];
+        venue.name = name;
+        venue.description = description;
+        venue.phone = phone;
+        venue.email = email;
+        venue.address = address;
+        venue.amenities = amenities;
+
+        alert('Facility updated successfully!');
+        
+        const modal = document.getElementById('editFacilityModal');
+        if (modal && bootstrap.Modal) {
+            bootstrap.Modal.getInstance(modal)?.hide();
+        }
+    }
+
+    // Show time slot modal
+    showTimeSlotModal() {
+        const modal = document.getElementById('timeSlotModal');
+        if (modal && bootstrap.Modal) {
+            this.populateTimeSlotCourtSelect();
+            new bootstrap.Modal(modal).show();
+        }
+    }
+
+    // Populate time slot court select
+    populateTimeSlotCourtSelect() {
+        const courtSelect = document.getElementById('timeSlotCourtSelect');
+        if (!courtSelect) return;
+
+        courtSelect.innerHTML = '<option value="">Select Court</option>';
+        this.venues[0].courts.forEach(court => {
+            const option = document.createElement('option');
+            option.value = court.id;
+            option.textContent = court.name;
+            courtSelect.appendChild(option);
+        });
+    }
+
+    // Apply time slot changes
+    applyTimeSlotChanges() {
+        const courtId = document.getElementById('timeSlotCourtSelect').value;
+        const date = document.getElementById('timeSlotDate').value;
+        const action = document.getElementById('timeSlotAction').value;
+
+        if (!courtId || !date || !action) {
+            alert('Please select court, date and action');
+            return;
+        }
+
+        alert(`Time slot changes applied for court ${courtId} on ${date}`);
+        
+        const modal = document.getElementById('timeSlotModal');
+        if (modal && bootstrap.Modal) {
+            bootstrap.Modal.getInstance(modal)?.hide();
+        }
     }
 }
 
@@ -1225,6 +2005,177 @@ window.clearFilters = function () {
 window.confirmBooking = function () {
     if (window.app) {
         window.app.confirmBooking();
+    }
+};
+
+// New global functions for enhanced features
+window.showPhotoGallery = function (venueId) {
+    if (window.app) {
+        window.app.showPhotoGallery(venueId);
+    }
+};
+
+window.showReviewModal = function (venueId) {
+    if (window.app) {
+        window.app.showReviewModal(venueId);
+    }
+};
+
+window.showMatchModal = function () {
+    if (window.app) {
+        window.app.showMatchModal();
+    }
+};
+
+window.createMatch = function () {
+    if (window.app) {
+        window.app.createMatch();
+    }
+};
+
+window.joinMatch = function (matchId) {
+    if (window.app) {
+        window.app.joinMatch(matchId);
+    }
+};
+
+window.processPayment = function () {
+    if (window.app) {
+        window.app.processPayment();
+    }
+};
+
+window.submitReview = function () {
+    if (window.app) {
+        window.app.submitReview();
+    }
+};
+
+window.showAddCourtModal = function () {
+    if (window.app) {
+        window.app.showAddCourtModal();
+    }
+};
+
+window.addNewCourt = function () {
+    if (window.app) {
+        window.app.addNewCourt();
+    }
+};
+
+window.showFacilityEditModal = function () {
+    if (window.app) {
+        window.app.showFacilityEditModal();
+    }
+};
+
+window.updateFacility = function () {
+    if (window.app) {
+        window.app.updateFacility();
+    }
+};
+
+window.showTimeSlotModal = function () {
+    if (window.app) {
+        window.app.showTimeSlotModal();
+    }
+};
+
+window.applyTimeSlotChanges = function () {
+    if (window.app) {
+        window.app.applyTimeSlotChanges();
+    }
+};
+
+window.previousMonth = function () {
+    if (window.app) {
+        window.app.previousMonth();
+    }
+};
+
+window.nextMonth = function () {
+    if (window.app) {
+        window.app.nextMonth();
+    }
+};
+
+window.selectCalendarDate = function (dateString) {
+    if (window.app) {
+        window.app.selectCalendarDate(dateString);
+    }
+};
+
+// Admin functions
+window.approveFacility = function (facilityId) {
+    if (window.app) {
+        // Move facility from pending to approved
+        const facility = window.app.pendingFacilities.find(f => f.id === facilityId);
+        if (facility) {
+            facility.status = 'approved';
+            facility.approved_date = new Date().toISOString().split('T')[0];
+            window.app.venues.push({
+                ...facility,
+                rating: 0,
+                total_reviews: 0,
+                courts: []
+            });
+            window.app.pendingFacilities = window.app.pendingFacilities.filter(f => f.id !== facilityId);
+            window.app.loadPendingFacilities();
+            alert('Facility approved successfully!');
+        }
+    }
+};
+
+window.rejectFacility = function (facilityId) {
+    if (window.app) {
+        window.app.pendingFacilities = window.app.pendingFacilities.filter(f => f.id !== facilityId);
+        window.app.loadPendingFacilities();
+        alert('Facility rejected successfully!');
+    }
+};
+
+window.viewFacilityPhotos = function (facilityId) {
+    if (window.app) {
+        const facility = window.app.pendingFacilities.find(f => f.id === facilityId);
+        if (facility && facility.photos) {
+            // Show photos in a simple modal
+            let photosHTML = facility.photos.map(photo => `
+                <img src="${photo.url}" alt="${photo.caption}" style="max-width: 100%; margin-bottom: 10px;">
+                <p class="text-center">${photo.caption}</p>
+            `).join('');
+            alert('Facility Photos:\n' + facility.photos.map(p => p.caption).join('\n'));
+        }
+    }
+};
+
+window.viewUserBookings = function (userId) {
+    if (window.app) {
+        const userBookings = window.app.bookings.filter(b => b.user_id === userId);
+        if (userBookings.length > 0) {
+            const bookingsList = userBookings.map(booking => 
+                `${booking.venue_name} - ${booking.court_name} on ${booking.booking_date}`
+            ).join('\n');
+            alert('User Bookings:\n' + bookingsList);
+        } else {
+            alert('No bookings found for this user.');
+        }
+    }
+};
+
+window.toggleUserStatus = function (userId) {
+    if (window.app) {
+        const user = window.app.users.find(u => u.id === userId);
+        if (user) {
+            user.status = user.status === 'active' ? 'banned' : 'active';
+            window.app.loadUsersList();
+            alert(`User ${user.full_name} ${user.status === 'active' ? 'unbanned' : 'banned'} successfully!`);
+        }
+    }
+};
+
+window.toggleTheme = function () {
+    if (window.app) {
+        window.app.toggleTheme();
     }
 };
 

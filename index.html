@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-color-scheme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,6 +23,9 @@
             </a>
             
             <div class="navbar-nav ms-auto" id="navbarMenu">
+                <button class="btn btn--outline btn--sm me-2" id="themeToggleBtn" aria-label="Toggle theme" title="Toggle light/dark mode" onclick="toggleTheme()">
+                    <i id="themeToggleIcon" class="fas fa-moon"></i>
+                </button>
                 <div class="nav-item dropdown" id="userMenuDropdown" style="display: none;">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                         <i class="fas fa-user"></i> <span id="userNameDisplay">User</span>
@@ -74,7 +77,7 @@
                         
                         <div class="cta-buttons">
                             <button class="btn btn--primary btn--lg me-3" onclick="showSection('auth')">Get Started</button>
-                            <button class="btn btn--outline btn--lg" onclick="showSection('venues')">Browse Venues</button>
+                            <button class="btn btn--outline btn--lg" id="browseVenuesBtn" onclick="showSection('venues')">Browse Venues</button>
                         </div>
                     </div>
                     <div class="col-lg-6">
@@ -264,12 +267,27 @@
             <div id="venuesGrid" class="row">
                 <!-- Venues will be populated by JavaScript -->
             </div>
+            
+            <!-- Match Creation Section -->
+            <div class="row mt-5">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card__body text-center">
+                            <h5>Looking for Playing Partners?</h5>
+                            <p class="text-muted">Create or join matches with other sports enthusiasts in your area!</p>
+                            <button class="btn btn--primary" onclick="showMatchModal()">
+                                <i class="fas fa-users"></i> Create/Join Match
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Venue Details Modal -->
     <div class="modal fade" id="venueModal" tabindex="-1">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="venueModalTitle">Venue Details</h5>
@@ -277,6 +295,368 @@
                 </div>
                 <div class="modal-body" id="venueModalBody">
                     <!-- Content populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Photo Gallery Modal -->
+    <div class="modal fade" id="photoGalleryModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Venue Photos</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="photoGalleryCarousel" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators" id="carouselIndicators">
+                            <!-- Indicators populated by JavaScript -->
+                        </div>
+                        <div class="carousel-inner" id="carouselInner">
+                            <!-- Photos populated by JavaScript -->
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#photoGalleryCarousel" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#photoGalleryCarousel" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review Modal -->
+    <div class="modal fade" id="reviewModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Write a Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Rating</label>
+                            <div class="rating-input">
+                                <i class="fas fa-star" data-rating="1"></i>
+                                <i class="fas fa-star" data-rating="2"></i>
+                                <i class="fas fa-star" data-rating="3"></i>
+                                <i class="fas fa-star" data-rating="4"></i>
+                                <i class="fas fa-star" data-rating="5"></i>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Review Title</label>
+                            <input type="text" class="form-control" id="reviewTitle" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Review</label>
+                            <textarea class="form-control" id="reviewText" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn--primary" onclick="submitReview()">Submit Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Match Creation Modal -->
+    <div class="modal fade" id="matchModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create or Join Match</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="match-tabs">
+                        <ul class="nav nav-tabs" id="matchTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active" id="create-tab" data-bs-toggle="tab" data-bs-target="#createMatch" type="button" role="tab">Create Match</button>
+                            </li>
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link" id="join-tab" data-bs-toggle="tab" data-bs-target="#joinMatch" type="button" role="tab">Join Match</button>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="matchTabContent">
+                            <div class="tab-pane fade show active" id="createMatch" role="tabpanel">
+                                <form id="createMatchForm">
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Sport Type</label>
+                                        <select class="form-control" id="matchSportType" required>
+                                            <option value="">Select Sport</option>
+                                            <option value="badminton">Badminton</option>
+                                            <option value="tennis">Tennis</option>
+                                            <option value="football">Football</option>
+                                            <option value="basketball">Basketball</option>
+                                            <option value="cricket">Cricket</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Skill Level</label>
+                                        <select class="form-control" id="matchSkillLevel" required>
+                                            <option value="">Select Level</option>
+                                            <option value="beginner">Beginner</option>
+                                            <option value="intermediate">Intermediate</option>
+                                            <option value="advanced">Advanced</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Players Needed</label>
+                                        <input type="number" class="form-control" id="playersNeeded" min="1" max="10" value="2" required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Match Date</label>
+                                        <input type="date" class="form-control" id="matchDate" required>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Preferred Time</label>
+                                        <select class="form-control" id="matchTime" required>
+                                            <option value="">Select Time</option>
+                                            <option value="06:00">6:00 AM</option>
+                                            <option value="08:00">8:00 AM</option>
+                                            <option value="10:00">10:00 AM</option>
+                                            <option value="16:00">4:00 PM</option>
+                                            <option value="18:00">6:00 PM</option>
+                                            <option value="20:00">8:00 PM</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <label class="form-label">Additional Notes</label>
+                                        <textarea class="form-control" id="matchNotes" rows="3" placeholder="Any specific requirements or preferences..."></textarea>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="tab-pane fade" id="joinMatch" role="tabpanel">
+                                <div id="availableMatches">
+                                    <!-- Available matches will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn--primary" onclick="createMatch()">Create Match</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal fade" id="paymentModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Payment Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="payment-summary mb-4">
+                        <h6>Booking Summary</h6>
+                        <div class="summary-item">
+                            <span>Venue:</span>
+                            <strong id="paymentVenueName">-</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Court:</span>
+                            <strong id="paymentCourtName">-</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Date & Time:</span>
+                            <strong id="paymentDateTime">-</strong>
+                        </div>
+                        <div class="summary-item">
+                            <span>Duration:</span>
+                            <strong id="paymentDuration">-</strong>
+                        </div>
+                        <div class="summary-item total">
+                            <span>Total Amount:</span>
+                            <strong id="paymentTotal">₹0</strong>
+                        </div>
+                    </div>
+                    
+                    <form id="paymentForm">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Card Number</label>
+                            <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Expiry Date</label>
+                                    <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="3" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Cardholder Name</label>
+                            <input type="text" class="form-control" id="cardholderName" placeholder="John Doe" required>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn--primary" onclick="processPayment()">Pay Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Court Modal -->
+    <div class="modal fade" id="addCourtModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Court</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addCourtForm">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Court Name</label>
+                            <input type="text" class="form-control" id="newCourtName" required>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Sport Type</label>
+                            <select class="form-control" id="newCourtSportType" required>
+                                <option value="">Select Sport</option>
+                                <option value="badminton">Badminton</option>
+                                <option value="tennis">Tennis</option>
+                                <option value="football">Football</option>
+                                <option value="basketball">Basketball</option>
+                                <option value="cricket">Cricket</option>
+                                <option value="volleyball">Volleyball</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label class="form-label">Price per Hour (₹)</label>
+                            <input type="number" class="form-control" id="newCourtPrice" min="100" step="50" required>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Operating Start Time</label>
+                                    <input type="time" class="form-control" id="newCourtStartTime" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Operating End Time</label>
+                                    <input type="time" class="form-control" id="newCourtEndTime" required>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn--primary" onclick="addNewCourt()">Add Court</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Facility Modal -->
+    <div class="modal fade" id="editFacilityModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Facility Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editFacilityForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Facility Name</label>
+                                    <input type="text" class="form-control" id="editFacilityName" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Description</label>
+                                    <textarea class="form-control" id="editFacilityDescription" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" id="editFacilityPhone" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="editFacilityEmail" required>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Address</label>
+                                    <textarea class="form-control" id="editFacilityAddress" rows="3" required></textarea>
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label class="form-label">Amenities (comma-separated)</label>
+                                    <input type="text" class="form-control" id="editFacilityAmenities" placeholder="Parking, Locker Room, AC, WiFi">
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn--primary" onclick="updateFacility()">Update Facility</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Time Slot Management Modal -->
+    <div class="modal fade" id="timeSlotModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Manage Time Slots</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="time-slot-management">
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Select Court</label>
+                                <select class="form-control" id="timeSlotCourtSelect">
+                                    <!-- Courts will be populated -->
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Select Date</label>
+                                <input type="date" class="form-control" id="timeSlotDate">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Action</label>
+                                <select class="form-control" id="timeSlotAction">
+                                    <option value="block">Block for Maintenance</option>
+                                    <option value="unblock">Unblock</option>
+                                    <option value="setPrice">Set Special Price</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="timeSlotGrid" class="time-slots-grid">
+                            <!-- Time slots will be populated -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn--secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn--primary" onclick="applyTimeSlotChanges()">Apply Changes</button>
                 </div>
             </div>
         </div>
@@ -361,6 +741,7 @@
                     <div class="card">
                         <div class="card__body">
                             <h6>Quick Actions</h6>
+                            <br>
                             <button class="btn btn--primary btn--full-width mb-2" onclick="showSection('venues')">Book New Court</button>
                         </div>
                     </div>
@@ -384,6 +765,27 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <!-- Booking Calendar -->
+                    <div class="card mb-4">
+                        <div class="card__header">
+                            <h5>Booking Calendar</h5>
+                            <div class="calendar-controls">
+                                <button class="btn btn--outline btn--sm" onclick="previousMonth()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <span id="currentMonth" class="mx-3"></span>
+                                <button class="btn btn--outline btn--sm" onclick="nextMonth()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card__body">
+                            <div id="bookingCalendar">
+                                <!-- Calendar will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-lg-4">
                     <div class="card mb-4">
@@ -401,6 +803,34 @@
                                 <span>Peak Hours:</span>
                                 <strong>6-8 PM</strong>
                             </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Peak Hours Chart -->
+                    <div class="card mb-4">
+                        <div class="card__header">
+                            <h6>Peak Booking Hours</h6>
+                        </div>
+                        <div class="card__body">
+                            <div style="position: relative; height: 200px;">
+                                <canvas id="peakHoursChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="card">
+                        <div class="card__body">
+                            <h6>Quick Actions</h6>
+                            <button class="btn btn--primary btn--full-width mb-2" onclick="showAddCourtModal()">
+                                <i class="fas fa-plus"></i> Add New Court
+                            </button>
+                            <button class="btn btn--outline btn--full-width mb-2" onclick="showFacilityEditModal()">
+                                <i class="fas fa-edit"></i> Edit Facility
+                            </button>
+                            <button class="btn btn--outline btn--full-width" onclick="showTimeSlotModal()">
+                                <i class="fas fa-clock"></i> Manage Time Slots
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -445,6 +875,58 @@
                                     <span>Revenue Optimization:</span>
                                     <strong>+15% improvement</strong>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Facility Approval Section -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card__header">
+                            <h5>Pending Facility Approvals</h5>
+                        </div>
+                        <div class="card__body">
+                            <div id="pendingFacilities">
+                                <!-- Pending facilities will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- User Management Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card__header">
+                            <h5>User Management</h5>
+                        </div>
+                        <div class="card__body">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <input type="text" class="form-control" id="userSearch" placeholder="Search users...">
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" id="userRoleFilter">
+                                        <option value="">All Roles</option>
+                                        <option value="user">Users</option>
+                                        <option value="facility_owner">Facility Owners</option>
+                                        <option value="admin">Admins</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select class="form-control" id="userStatusFilter">
+                                        <option value="">All Status</option>
+                                        <option value="active">Active</option>
+                                        <option value="banned">Banned</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="usersList">
+                                <!-- Users will be populated here -->
                             </div>
                         </div>
                     </div>
