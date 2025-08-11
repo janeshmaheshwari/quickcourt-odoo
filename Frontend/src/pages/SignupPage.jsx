@@ -54,8 +54,10 @@ export default function SignupPage() {
 
     try {
       const data = await signupUser(formData);
+      console.log(data);
+      
       if (data.success) {
-        navigate(`/verify-otp?email=${formData.email}`);
+        navigate(`/login`);
       } else {
         setError(data.message || "Signup failed. Please try again.");
       }

@@ -46,7 +46,7 @@ export const loginUser = async (email, password) => {
   return apiCall(`${config.API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email: email, password: password }),
   });
 };
 

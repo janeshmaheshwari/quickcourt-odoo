@@ -2,7 +2,6 @@ import asyncHandler from "express-async-handler";
 import User from "../models/User.js";
 import generateToken from "../utils/generateToken.js";
 import bcrypt from "bcryptjs";
-import sendEmail from "../utils/sendEmail.js";
 
 // @desc    Register a new user
 // @route   POST /api/auth/register
@@ -24,54 +23,17 @@ export const registerUser = asyncHandler(async (req, res) => {
     password: hashedPassword,
     avatar,
     role,
-    isVerified: false,
   });
 
   if (user) {
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    user.otp = otp;
     await user.save();
-
-    // Send OTP via email
-    await sendEmail({
-      to: email,
-      subject: "QuickCourt - Verify Your Email",
-      html: `
-        <h1>Welcome to QuickCourt!</h1>
-        <p>Your verification code is: <strong>${otp}</strong></p>
-        <p>This code will expire in 10 minutes.</p>
-      `,
-    });
-
-    res.status(201).json({ message: "User registered. Please check your email for OTP verification." });
+    res.status(200).json({ message: "User registered.", success:true });
   } else {
     res.status(400);
     throw new Error("Invalid user data");
   }
 });
 
-// @desc    Verify OTP
-// @route   POST /api/auth/verify-otp
-// @access  Public
-export const verifyOtp = asyncHandler(async (req, res) => {
-  const { email, otp } = req.body;
-
-  const user = await User.findOne({ email });
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found");
-  }
-
-  if (user.otp === otp) {
-    user.isVerified = true;
-    user.otp = null;
-    await user.save();
-    res.json({ message: "OTP verified successfully" });
-  } else {
-    res.status(400);
-    throw new Error("Invalid OTP");
-  }
-});
 
 // @desc    Login user
 // @route   POST /api/auth/login
@@ -80,6 +42,8 @@ export const loginUser = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email });
+  console.log(user);
+  
   if (!user) {
     res.status(401);
     throw new Error("Invalid email or password");
@@ -88,15 +52,14 @@ export const loginUser = asyncHandler(async (req, res) => {
   console.log(user);
   const isMatch = await bcrypt.compare(password, user.password);
 
-
-  
-  if (isMatch && user.isVerified) {
-    generateToken(res, user._id);
+  if (isMatch) {
+    const token = await generateToken(res, user._id);
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       role: user.role,
+      token
     });
   } else {
     res.status(401);

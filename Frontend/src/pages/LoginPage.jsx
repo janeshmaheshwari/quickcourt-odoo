@@ -5,11 +5,18 @@ import { useNavigate, Link } from "react-router-dom";
 export default function LoginPage({ setUser }) {
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const handleEmail = (e) => {
+    setEmail(e.target.value)
+    setError(""); // Clear error when user types
+  };
+  const handlePassword = (e) => {
+    setPassword(e.target.value)
     setError(""); // Clear error when user types
   };
 
@@ -19,7 +26,7 @@ export default function LoginPage({ setUser }) {
     setError("");
 
     try {
-      const data = await loginUser(formData);
+      const data = await loginUser(email, password);
       
       if (data._id) {
         // Store user data in localStorage
@@ -98,8 +105,8 @@ export default function LoginPage({ setUser }) {
                   type="email"
                   autoComplete="email"
                   required
-                  value={formData.email}
-                  onChange={handleChange}
+                  value={email}
+                  onChange={handleEmail}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                   placeholder="Enter your email"
                 />
@@ -122,8 +129,8 @@ export default function LoginPage({ setUser }) {
                   type="password"
                   autoComplete="current-password"
                   required
-                  value={formData.password}
-                  onChange={handleChange}
+                  value={password}
+                  onChange={handlePassword}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                   placeholder="Enter your password"
                 />
