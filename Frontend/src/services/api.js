@@ -42,11 +42,11 @@ const apiCall = async (url, options = {}) => {
 };
 
 // Auth endpoints
-export const loginUser = async (email, password) => {
+export const loginUser = async (credentials) => {
   return apiCall(`${config.API_URL}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify(credentials),
   });
 };
 

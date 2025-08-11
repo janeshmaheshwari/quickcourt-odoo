@@ -1,5 +1,5 @@
 import asyncHandler from "express-async-handler";
-import User from "../models/User.js";
+import User from "../models/user.js";
 import generateToken from "../utils/generateToken.js";
 import bcrypt from "bcryptjs";
 
@@ -8,6 +8,18 @@ import bcrypt from "bcryptjs";
 // @access  Public
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, avatar, role } = req.body;
+
+  // Validate required fields
+  if (!name || !email || !password || !role) {
+    res.status(400);
+    throw new Error("Please provide all required fields: name, email, password, and role");
+  }
+
+  // Validate role
+  if (!["customer", "owner"].includes(role)) {
+    res.status(400);
+    throw new Error("Role must be either 'customer' or 'owner'");
+  }
 
   const userExists = await User.findOne({ email });
   if (userExists) {
@@ -32,7 +44,16 @@ export const registerUser = asyncHandler(async (req, res) => {
     user.otp = otp;
     await user.save();
 
-    res.status(201).json({ message: "User registered. Verify OTP.", otp });
+    res.status(201).json({ 
+      message: "User registered successfully. Please verify OTP.", 
+      otp,
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
   } else {
     res.status(400);
     throw new Error("Invalid user data");

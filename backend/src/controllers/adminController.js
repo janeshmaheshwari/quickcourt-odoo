@@ -1,6 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Facility from "../models/Facility.js";
-import User from "../models/User.js";
+import User from "../models/user.js";
 import Booking from "../models/Booking.js";
 
 // Approve facility

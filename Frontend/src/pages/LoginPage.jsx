@@ -20,21 +20,21 @@ export default function LoginPage({ setUser }) {
 
     try {
       const data = await loginUser(formData);
-      
+
       if (data._id) {
         // Store user data in localStorage
         localStorage.setItem("token", data.token || "dummy-token");
         localStorage.setItem("role", data.role || "user");
         localStorage.setItem("userId", data._id);
         localStorage.setItem("userName", data.name);
-        
-        setUser({ 
-          token: data.token || "dummy-token", 
+
+        setUser({
+          token: data.token || "dummy-token",
           role: data.role || "user",
           id: data._id,
           name: data.name
         });
-        
+
         // Redirect based on role
         if (data.role === "admin") {
           navigate("/admin/dashboard");

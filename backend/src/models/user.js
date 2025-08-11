@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema(
     avatar: { type: String, default: "" },
     role: {
       type: String,
-      enum: ["user", "owner", "admin"],
-      default: "user",
+      enum: ["customer", "owner", "admin"],
+      default: "customer",
     },
     isVerified: { type: Boolean, default: false },
     otp: { type: String },
