@@ -66,7 +66,6 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<LoginPage setUser={setUser} />} />
             <Route path="/signup" element={<SignupPage />} />
-            <Route path="/verify-otp" element={<OTPVerification />} />
             <Route path="/venues" element={<Venues />} />
             <Route path="/venue/:id" element={<VenueDetails />} />
 
@@ -92,14 +91,6 @@ function App() {
               element={
                 <ProtectedRoute role="customer">
                   <UserDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/payment-success"
-              element={
-                <ProtectedRoute role="customer">
-                  <PaymentSimulation />
                 </ProtectedRoute>
               }
             />

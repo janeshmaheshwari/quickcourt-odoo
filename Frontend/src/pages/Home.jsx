@@ -1,6 +1,76 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getPopularVenues } from "../services/api";
+// import { getPopularVenues } from "../services/api";
+
+// Dummy popular venues data
+const DUMMY_POPULAR_VENUES = [
+  {
+    _id: "1",
+    name: "Elite Sports Complex",
+    location: "Sector 15, City Center",
+    sportType: "Badminton",
+    pricePerHour: 800,
+    rating: 4.9,
+    bookingCount: 156,
+    images: ["https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"],
+    popular: true
+  },
+  {
+    _id: "2",
+    name: "Champions Football Ground",
+    location: "Sports City, Zone A",
+    sportType: "Football",
+    pricePerHour: 1200,
+    rating: 4.8,
+    bookingCount: 142,
+    images: ["https://images.unsplash.com/photo-1459865264687-595d652de67e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"],
+    popular: true
+  },
+  {
+    _id: "3",
+    name: "City Tennis Club",
+    location: "Downtown, Main Street",
+    sportType: "Tennis",
+    pricePerHour: 600,
+    rating: 4.7,
+    bookingCount: 134,
+    images: ["https://images.unsplash.com/photo-1551698618-1dfe5d97d256?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"],
+    popular: true
+  },
+  {
+    _id: "4",
+    name: "Premier Cricket Ground",
+    location: "Green Valley, Stadium Road",
+    sportType: "Cricket",
+    pricePerHour: 1500,
+    rating: 4.9,
+    bookingCount: 128,
+    images: ["https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"],
+    popular: true
+  },
+  {
+    _id: "5",
+    name: "Urban Basketball Arena",
+    location: "North Side, Athletic Hub",
+    sportType: "Basketball",
+    pricePerHour: 700,
+    rating: 4.6,
+    bookingCount: 118,
+    images: ["https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"],
+    popular: true
+  },
+  {
+    _id: "6",
+    name: "Beach Volleyball Paradise",
+    location: "Marina Beach, Waterfront",
+    sportType: "Volleyball",
+    pricePerHour: 750,
+    rating: 4.8,
+    bookingCount: 95,
+    images: ["https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"],
+    popular: true
+  }
+];
 
 export default function Home() {
   const [popularVenues, setPopularVenues] = useState([]);
@@ -16,14 +86,24 @@ export default function Home() {
     const fetchVenues = async () => {
       try {
         setLoading(true);
-        const data = await getPopularVenues(6);
+        
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 1200));
+        
+        // Use dummy data
+        const data = {
+          venues: DUMMY_POPULAR_VENUES,
+          total: 16 // Total venues in our system
+        };
+        
         setPopularVenues(data.venues || []);
         
-        // Update stats based on real data
+        // Calculate stats based on dummy data
+        const totalBookings = data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 773;
         setStats({
-          totalVenues: data.total || 5,
-          totalBookings: data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 25,
-          happyUsers: Math.floor((data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 150) * 0.8)
+          totalVenues: data.total || 16,
+          totalBookings: totalBookings,
+          happyUsers: Math.floor(totalBookings * 0.85) // 85% satisfaction rate
         });
       } catch (error) {
         console.error("Error fetching venues", error);
@@ -123,11 +203,11 @@ export default function Home() {
               <div className="text-gray-600">Premium Venues</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-green-600 mb-2">{stats.totalBookings}+</div>
+              <div className="text-4xl font-bold text-green-600 mb-2">{stats.totalBookings.toLocaleString()}+</div>
               <div className="text-gray-600">Successful Bookings</div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold text-purple-600 mb-2">{stats.happyUsers}+</div>
+              <div className="text-4xl font-bold text-purple-600 mb-2">{stats.happyUsers.toLocaleString()}+</div>
               <div className="text-gray-600">Happy Users</div>
             </div>
           </div>
@@ -190,6 +270,9 @@ export default function Home() {
                     <div className="absolute top-4 right-4 bg-yellow-400 text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
                       Popular
                     </div>
+                    <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-1 rounded-full text-sm font-semibold">
+                      {venue.sportType}
+                    </div>
                   </div>
                   
                   <div className="p-6">
@@ -199,7 +282,7 @@ export default function Home() {
                       </h3>
                       <div className="flex items-center space-x-1">
                         <span className="text-yellow-400">★</span>
-                        <span className="text-sm text-gray-600">4.8</span>
+                        <span className="text-sm text-gray-600">{venue.rating}</span>
                       </div>
                     </div>
                     
@@ -216,7 +299,7 @@ export default function Home() {
                         ₹{venue.pricePerHour || 500}
                         <span className="text-sm text-gray-500 font-normal">/hr</span>
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-green-600 font-medium">
                         {venue.bookingCount || 0} bookings
                       </div>
                     </div>
