@@ -158,9 +158,13 @@ export const getVenueAmenities = async () => {
 
 // Owner endpoints
 export const createFacility = async (facilityData) => {
+  const token = localStorage.getItem(config.STORAGE_KEYS.TOKEN);
   return apiCall(`${config.API_URL}/owner/facilities`, {
     method: "POST",
-    headers: getAuthHeaders(),
+    headers: {
+      "Content-Type": "application/json",
+      "Cookie": `jwt=${localStorage.getItem("token")}`,
+    },
     body: JSON.stringify(facilityData),
   });
 };

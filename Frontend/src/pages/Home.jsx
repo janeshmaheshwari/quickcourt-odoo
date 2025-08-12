@@ -7,9 +7,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({
-    totalVenues: 0,
-    totalBookings: 0,
-    happyUsers: 0
+    totalVenues: 5,
+    totalBookings: 25,
+    happyUsers: 125
   });
 
   useEffect(() => {
@@ -21,9 +21,9 @@ export default function Home() {
         
         // Update stats based on real data
         setStats({
-          totalVenues: data.total || 0,
-          totalBookings: data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 0,
-          happyUsers: Math.floor((data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 0) * 0.8)
+          totalVenues: data.total || 5,
+          totalBookings: data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 25,
+          happyUsers: Math.floor((data.venues?.reduce((sum, venue) => sum + (venue.bookingCount || 0), 0) || 150) * 0.8)
         });
       } catch (error) {
         console.error("Error fetching venues", error);

@@ -91,11 +91,13 @@ export default function Navbar({ user, setUser }) {
             ) : (
               <div className="flex items-center space-x-4">
                 {user.role === "customer" && (
-                  <>
+                  <div className="flex items-center space-x-4">
                     <Link 
                       to="/dashboard" 
                       className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-                        isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                        isActive('/dashboard')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
                       }`}
                     >
                       Dashboard
@@ -103,38 +105,104 @@ export default function Navbar({ user, setUser }) {
                     <Link 
                       to="/my-bookings" 
                       className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-                        isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                        isActive('/my-bookings')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
                       }`}
                     >
                       My Bookings
                     </Link>
-                  </>
+                  </div>
                 )}
                 
                 {user.role === "owner" && (
-                  <>
+                  <div className="flex items-center space-x-4">
                     <Link 
                       to="/owner/dashboard" 
                       className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-                        isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                        isActive('/owner/dashboard')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
                       }`}
                     >
-                      Owner Panel
+                      Dashboard
                     </Link>
-                  </>
+                    <Link 
+                      to="/owner/facilities" 
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                        isActive('/owner/facilities')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                      }`}
+                    >
+                      Facilities
+                    </Link>
+                    <Link 
+                      to="/owner/courts" 
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                        isActive('/owner/courts')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                      }`}
+                    >
+                      Courts
+                    </Link>
+                    <Link 
+                      to="/owner/bookings" 
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                        isActive('/owner/bookings')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                      }`}
+                    >
+                      Bookings
+                    </Link>
+                  </div>
                 )}
                 
                 {user.role === "admin" && (
-                  <>
+                  <div className="flex items-center space-x-4">
                     <Link 
                       to="/admin/dashboard" 
                       className={`px-4 py-2 rounded-lg transition-all duration-200 ${
-                        isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                        isActive('/admin/dashboard')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
                       }`}
                     >
-                      Admin Panel
+                      Dashboard
                     </Link>
-                  </>
+                    <Link 
+                      to="/admin/facility-approvals" 
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                        isActive('/admin/facility-approvals')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                      }`}
+                    >
+                      Approvals
+                    </Link>
+                    <Link 
+                      to="/admin/users" 
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                        isActive('/admin/users')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                      }`}
+                    >
+                      Users
+                    </Link>
+                    <Link 
+                      to="/admin/reports" 
+                      className={`px-4 py-2 rounded-lg transition-all duration-200 ${
+                        isActive('/admin/reports')
+                          ? 'text-yellow-500 font-semibold'
+                          : isScrolled ? 'text-gray-700 hover:text-yellow-500' : 'text-white hover:text-yellow-300'
+                      }`}
+                    >
+                      Reports
+                    </Link>
+                  </div>
                 )}
                 
                 <div className="relative group">
@@ -160,6 +228,30 @@ export default function Navbar({ user, setUser }) {
                         <p className="text-sm text-gray-500">Signed in as</p>
                         <p className="text-sm font-semibold text-gray-900 capitalize">{user.role}</p>
                       </div>
+                      {user.role === "owner" && (
+                        <Link
+                          to="/owner/profile"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                        >
+                          Profile Settings
+                        </Link>
+                      )}
+                      {user.role === "admin" && (
+                        <Link
+                          to="/admin/profile"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                        >
+                          Profile Settings
+                        </Link>
+                      )}
+                      {user.role === "customer" && (
+                        <Link
+                          to="/dashboard"
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200"
+                        >
+                          Profile Settings
+                        </Link>
+                      )}
                       <button
                         onClick={handleLogout}
                         className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"

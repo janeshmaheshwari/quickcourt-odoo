@@ -34,6 +34,8 @@ export default function LoginPage({ setUser }) {
         localStorage.setItem("role", data.role || "user");
         localStorage.setItem("userId", data._id);
         localStorage.setItem("userName", data.name);
+        localStorage.setItem("token", data.token);
+
         
         setUser({ 
           token: data.token || "dummy-token", 

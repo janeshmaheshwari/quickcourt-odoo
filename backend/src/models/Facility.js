@@ -10,7 +10,7 @@ const facilitySchema = new mongoose.Schema(
     images: [{ type: String }],
     isApproved: { type: Boolean, default: false },
     pricePerHour: { type: Number, required: true },
-    type: { type: String, enum: ["indoor", "outdoor"], default: "outdoor" },
+    type: { type: String, }
   },
   { timestamps: true }
 );
